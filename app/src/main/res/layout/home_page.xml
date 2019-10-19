@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/background_light">
+
+    <TextView
+        android:id="@+id/gravityLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="494dp"
+        android:layout_marginEnd="198dp"
+        android:layout_marginStart="62dp"
+        android:text="@string/gravity"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/gravityValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="496dp"
+        android:layout_marginEnd="67dp"
+        android:layout_marginStart="233dp"
+        android:text="@string/defaultgravity"
+
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+
+
+    <TextView
+        android:id="@+id/gravityUnit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="499dp"
+        android:layout_marginEnd="-6dp"
+        android:layout_marginStart="306dp"
+        android:text="@string/brix"
+
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/tempLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="380dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginEnd="200dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/temperature"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/tempValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="380dp"
+        android:layout_marginEnd="67dp"
+        android:layout_marginStart="233dp"
+        android:text="@string/_0_0"
+
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tempUnit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="380dp"
+        android:layout_marginEnd="-6dp"
+        android:layout_marginStart="306dp"
+        android:text= "@string/f"
+
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/rgGavity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="300dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginStart="20dp"
+        android:text="Updated x min ago"
+        android:textSize="20sp" />
+
+
+    <Button
+        android:id="@+id/refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="150dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginEnd="200dp"
+        android:layout_marginStart="20dp"
+        android:text="Refresh"
+        android:textSize="20sp" />
+
+
+
+
+</RelativeLayout>

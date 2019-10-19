@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+tools:showIn="navigation_view">
+<!-- Single mean only one is selected a the time -->
+<group android:checkableBehavior="single">
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_home"
+        android:title="Home" />
+    <item
+        android:id="@+id/nav_unit"
+        android:icon="@drawable/ic_unit"
+        android:title="Settings" />
+    <item
+        android:id="@+id/nav_brew_profile"
+        android:icon="@drawable/ic_brew_profile"
+        android:title="Brew profile" />
+    <item
+        android:id="@+id/nav_calibrate"
+        android:icon="@drawable/ic_calibrate"
+        android:title="Calibrate Dyp" />
+</group>
+
+    <!-- this items stay selected when you click on them
+<item android:title="Communicate">
+    <menu>
+        <item
+            android:id="@+id/nav_share"
+            android:icon="@drawable/ic_share"
+            android:title="Share" />
+        <item
+            android:id="@+id/nav_send"
+            android:icon="@drawable/ic_send"
+            android:title="Send" />
+    </menu>
+</item>
+-->
+</menu>

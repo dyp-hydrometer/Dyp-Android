@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Dyp hydrometer</string>
+    <string name="hydrometer">Hydrometer</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="gravity">Gravity Unit:</string>
+    <string name="defaultgravity">0.0</string>
+    <string name="brix">Brix</string>
+    <string name="_0_0">0.0</string>
+    <string name="temperature">Temperature:</string>
+    <string name="f">F</string>
+
+    <string name="radiobutton">RadioButton</string>
+    <string name="plato">Plato</string>
+    <string name="select_preferred_unit">Select preferred Unit</string>
+    <string name="specific_gravity">Specific gravity</string>
+    <string name="gravity_unit">Gravity Unit</string>
+    <string name="temperture_unit">Temperature Unit:</string>
+    <string name="celsius">Celsius</string>
+    <string name="fahrenheit">Fahrenheit</string>
+    <string name="beer_name">Beer Name</string>
+    <string name="set_specific_gravity">Set Specific Gravity:</string>
+    <string name="type_here">type here</string>
+    <string name="brix_">Brix</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="_0_0_">0.0</string>
+    <string name="new_brewing_profile">New Brewing Profile</string>
+</resources>
