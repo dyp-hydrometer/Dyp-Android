@@ -1,8 +1,10 @@
 package com.test.framer;
 
 
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -10,11 +12,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+
+//import static java.lang.Thread.currentThread;
 //import android.widget.Toast;
 //import android.support.v7.widget.Toolbar;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawer;
+    final Handler refreshHandler = new Handler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,15 +42,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new homeFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_home);
+            // using contain for auto refresh
+            contents();
         }
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
         switch (item.getItemId()) {
             case R.id.nav_home:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new homeFragment()).commit();
+//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+//                        new homeFragment()).commit();
+
+                contents();
+
                 break;
             case R.id.nav_unit:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
@@ -69,6 +81,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    public void contents() {
+        //private volatile boolean exit = false;
+
+        //        homeFragment hf = new homeFragment();
+//        FragmentManager manager = getFragmentManager();
+//        manager.beginTransaction()
+//                .replace(R.id.fragment_container,new homeFragment()).commit();
+//        public void run() {
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                new homeFragment()).commit();
+        Refresh(2000);
+    }
+
+//        public void stop() {
+//            exit = true;
+//        }
+
+    // onCreateView().getAutofillId();
+    // public Handler refreshHandler = new Handler();
+
+
+    public void Refresh(int milliseconds) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                // do updates
+                //this.run();
+                contents();
+            }
+
+        };
+        refreshHandler.postDelayed(runnable, milliseconds);
+
+    }
+
+
+
 
     @Override
     public void onBackPressed() {

@@ -28,13 +28,15 @@ import java.util.Random;
 
 
 public class homeFragment extends Fragment {
-    final Handler refreshHandler = new Handler();
+
     private TextView gravTexview;
     private TextView tempTextView;
     private Button refreshBtn;
     RequestQueue queue;
     Random random = new Random();
     private int num=0;
+    private double grav=0;   // gravity of the Hydrometer
+    private double temp=0;
 
 
 
@@ -54,29 +56,101 @@ public class homeFragment extends Fragment {
 
         // Json Object request
 
+      //  http://192.168.43.244:5000/api/hydrometers/2/last
+       // "https://jsonplaceholder.typicode.com/todos/1", null,
+//            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
+//                    "https://jsonplaceholder.typicode.com/todos/1", null,
+//                    new Response.Listener<JSONObject>() {
+//                        @Override
+//                        public void onResponse(JSONObject jsonbject) {
+//                            try {
+//                                num = random.nextInt(50) + 1;
+//                                Log.d("JSON", "onResponse: " + jsonbject.get("data"));
+//                                gravTexview.setText(String.valueOf(num));
+//                               // tempTextView.setText(String.valueOf(jsonbject.getString("id")));
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    }, new Response.ErrorListener() {
+//                @Override
+//                public void onErrorResponse(VolleyError error) {
+//                    Log.d("Error", "onErrorResponse: " + error.getMessage());
+//                }
+//            });
+//
+//            queue.add(jsonObjectRequest);
 
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
-                    "https://jsonplaceholder.typicode.com/todos/1", null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject jsonbject) {
-                            try {
-                                num = random.nextInt(50) + 1;
-                                Log.d("JSON", "onResponse: " + jsonbject.getString("id"));
-                                gravTexview.setText(String.valueOf(num));
-                               // tempTextView.setText(String.valueOf(jsonbject.getString("id")));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+
+
+
+//----------------------------mock API object------------------------
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
+                "https://jsonplaceholder.typicode.com/todos/1", null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject jsonbject) {
+                        try {
+                            // num = random.nextInt(50) + 1;    // generate the random number from
+                            Log.d("JSON", "onResponse: " + jsonbject.getInt("id"));
+                            grav=jsonbject.getInt("id");
+                            gravTexview.setText(String.valueOf(grav));
+                            // tempTextView.setText(String.valueOf(jsonbject.getString("id")));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.d("Error", "onErrorResponse: " + error.getMessage());
-                }
-            });
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Error", "onErrorResponse: " + error.getMessage());
+            }
+        });
 
-            queue.add(jsonObjectRequest);
+        queue.add(jsonObjectRequest);
+
+//------------------------------------------------------------------------
+
+        // Json Array request
+
+// Json Array request
+        //---------Get the last data entry of the hydrometer, Specific gravity and temperature
+//        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,
+//                "http://192.168.1.2:5000/api/hydrometers/2/data/last", null, new Response.Listener<JSONArray>() {
+//             //Log.d("JSONARRAY", "onResponse: " );
+//
+//            @Override
+//            public void onResponse(JSONArray response) {
+//               // System.out.printf("testtsts");
+//                Log.d("JSONARRAY", "onResponse: " + " Test" );
+//                for(int i=0; i < response.length(); i++){
+//                  //  Log.d("JSONARRAY", "onResponse: " + response.length());
+//                    try {
+//                        JSONObject jsonObject=response.getJSONObject(i);
+//                        //num = random.nextInt(50) + 1;
+//                       // boolean compl = jsonObject.getBoolean("completed");
+//                        grav=jsonObject.getDouble("specific_gravity");
+//                        temp=jsonObject.getDouble("temp");
+//                      //  gravTexview.setText(String.valueOf(num));
+//                      gravTexview.setText(String.valueOf(grav));
+//                      tempTextView.setText(String.valueOf(temp));
+//
+//                    //    Log.d("JSONARRAY", "onResponse: " + );
+//
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//
+//            }
+//        });
+//        queue.add(jsonArrayRequest);
+
+
             refreshBtn.setOnClickListener(new View.OnClickListener(){
               @Override
               public void onClick(View v){
@@ -105,29 +179,31 @@ public class homeFragment extends Fragment {
 
 
     }
-    public View content(View v){
-        homeFragment hf = new homeFragment();
-        FragmentManager manager = getFragmentManager();
-        manager.beginTransaction()
-                .replace(R.id.fragment_container,new homeFragment()).commit();
+//    public void content(){
+//        homeFragment hf = new homeFragment();
+//        FragmentManager manager = getFragmentManager();
+//        manager.beginTransaction()
+//                .replace(R.id.fragment_container,new homeFragment()).commit();
+//
+//        Refresh(1000, v);
+//        // onCreateView().getAutofillId();
+//        // public Handler refreshHandler = new Handler();
+//    }
+//
+//    public void Refresh(int milliseconds){
+//        Runnable runnable = new Runnable() {
+//            @Override
+//            public void run() {
+//                // do updates
+//               content();
+//            }
+//
+//        };
+//        refreshHandler.postDelayed(runnable, milliseconds);
+//
+//    }
 
-        return Refresh(1000, v);
-        // onCreateView().getAutofillId();
-        // public Handler refreshHandler = new Handler();
-    }
 
-    public View Refresh(int milliseconds, final View v){
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                // do updates
-               content(v);
-            }
-
-        };
-        refreshHandler.postDelayed(runnable, milliseconds);
-        return v;
-    }
 //    FragmantClass rSum = new FragmantClass();
 //    getSupportFragmentManager().beginTransaction().remove(rSum).commit();
 
