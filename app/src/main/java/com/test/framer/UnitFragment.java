@@ -20,6 +20,8 @@ public class UnitFragment extends Fragment implements View.OnClickListener{
     private RadioButton gravityRb;
     private RadioButton brixRb;
     private RadioButton platoRb;
+    public static String tempUnit="C";
+    public static String gravUnit=null;
 
     @Nullable
     @Override
@@ -47,33 +49,39 @@ public class UnitFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View view) {
+        prefs = new Prefs(getActivity());
         boolean checked = ((RadioButton) view).isChecked();
         // save the unit selected
         switch(view.getId()){
 
             case R.id.rbSpecificGravity:
-               // prefs.saveGravityUnit("Sp");
+                prefs.saveGravityUnit("SG");
+                gravUnit="SG";
                 Toast.makeText(getActivity(), "Specific Gravity", Toast.LENGTH_LONG ).show();
                 break;
 
             case R.id.rbBrix:
-               // prefs.saveGravityUnit("Brix");
+                prefs.saveGravityUnit("Brix");
+                gravUnit="Brix";
                 Toast.makeText(getActivity(), "Brix", Toast.LENGTH_LONG ).show();
                 break;
             case R.id.rbPlato:
-               // prefs.saveGravityUnit("Plato");
+                prefs.saveGravityUnit("Plato");
+                gravUnit="Plato";
                 Toast.makeText(getActivity(), "Plato", Toast.LENGTH_LONG ).show();
                 break;
         }
         switch(view.getId()) {
 
             case R.id.rbCelcius:
-                //prefs.saveTempUnit("C");
+                prefs.saveTempUnit("C");
+                tempUnit="C";
                 Toast.makeText(getActivity(), "Celsius", Toast.LENGTH_LONG).show();
                 break;
 
             case R.id.rbFahrenheit:
-                //prefs.saveTempUnit("F");
+                prefs.saveTempUnit("F");
+                tempUnit="F";
                 Toast.makeText(getActivity(), "Fahrenheit", Toast.LENGTH_LONG).show();
                 break;
         }

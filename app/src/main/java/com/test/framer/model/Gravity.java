@@ -2,19 +2,19 @@ package com.test.framer.model;
 import java.lang.Math;
 
 public class Gravity {
-    private float gravity;
-
-    public Gravity(float gravity) {
-        this.gravity = gravity;
-    }
-
-    public void setGravity(float gravity) {
-        this.gravity = gravity;
-    }
+//    private float gravity;
+//
+//    public Gravity(float gravity) {
+//        this.gravity = gravity;
+//    }
+//
+//    public void setGravity(float gravity) {
+//        this.gravity = gravity;
+//    }
 
     // arguments: gravity in specific gravity(not unt)
     // return the prefer unit in brix, plato
-    public double prefTempUnit(float SG,String prefGravity ){
+    public static double prefGravUnit(double SG,String prefGravity ){
         double brix,plato;
         if(prefGravity=="Brix"){
             brix= ((((182.4601 * SG) -775.6821) * SG +1262.7794) * SG -669.5622);
@@ -31,7 +31,7 @@ public class Gravity {
 //ABV = alcohol by volume, OG = original gravity, and FG =
 // gravity. So, using this formula with a beer having an OG
 // of 1.055 and a FG of 1.015, your ABV would be 5.25%.
-    public float ABV(float OG, float FG){
+    public static float ABV(float OG, float FG){
         return (float) ((OG-FG)*131.25);
     }
 }

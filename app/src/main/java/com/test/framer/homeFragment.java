@@ -20,23 +20,33 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import java.util.Date;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.Random;
+import static com.test.framer.UnitFragment.gravUnit;
+import static com.test.framer.UnitFragment.tempUnit;
+import com.test.framer.model.Gravity;
+import com.test.framer.model.temperature;
+
+import javax.xml.transform.Templates;
 
 
 public class homeFragment extends Fragment {
 
     private TextView gravTexview;
     private TextView tempTextView;
+    private TextView unitGrav;
+    private TextView unitTemp;
     private Button refreshBtn;
     RequestQueue queue;
     Random random = new Random();
     private int num=0;
     private double grav=0;   // gravity of the Hydrometer
     private double temp=0;
+    private static Gravity G;
+    private static temperature T;
+
 
 
 
@@ -49,6 +59,8 @@ public class homeFragment extends Fragment {
         gravTexview = v.findViewById(R.id.gravityValue);
         tempTextView = v.findViewById(R.id.tempValue);
         refreshBtn = v.findViewById(R.id.refresh);
+        unitGrav = v.findViewById(R.id.gravityUnit);
+        unitTemp = v.findViewById(R.id.tempUnit);
 
         // create a new instance of the singleton if it does not exist
         queue = DypSingletonAPI.getInstance(getActivity().getApplicationContext())
@@ -93,9 +105,20 @@ public class homeFragment extends Fragment {
                         try {
                             // num = random.nextInt(50) + 1;    // generate the random number from
                             Log.d("JSON", "onResponse: " + jsonbject.getInt("id"));
-                            grav=jsonbject.getInt("id");
-                            gravTexview.setText(String.valueOf(grav));
-                            // tempTextView.setText(String.valueOf(jsonbject.getString("id")));
+                            grav=jsonbject.getDouble("id");
+                            temp=jsonbject.getDouble("id");
+
+                            //---------------------------- new
+                            unitGrav.setText(gravUnit);
+                            unitTemp.setText(tempUnit);
+                            grav = Gravity.prefGravUnit(grav,gravUnit);
+                            temp = temperature.prefTemprature(temp,tempUnit);
+
+
+                            gravTexview.setText(String.format("%.2f",grav));
+                            tempTextView.setText(String.format("%.2f", temp));
+                            //----------------------------------
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -127,15 +150,21 @@ public class homeFragment extends Fragment {
 //                  //  Log.d("JSONARRAY", "onResponse: " + response.length());
 //                    try {
 //                        JSONObject jsonObject=response.getJSONObject(i);
-//                        //num = random.nextInt(50) + 1;
-//                       // boolean compl = jsonObject.getBoolean("completed");
 //                        grav=jsonObject.getDouble("specific_gravity");
 //                        temp=jsonObject.getDouble("temp");
 //                      //  gravTexview.setText(String.valueOf(num));
-//                      gravTexview.setText(String.valueOf(grav));
-//                      tempTextView.setText(String.valueOf(temp));
+//   //                   gravTexview.setText(String.valueOf(grav));
+//   //                   tempTextView.setText(String.valueOf(temp));
+////---------------------------- new
+//                        unitGrav.setText(gravUnit);
+//                        unitTemp.setText(tempUnit);
+//                        grav = Gravity.prefGravUnit(grav,gravUnit);
+//                        temp = temperature.prefTemprature(temp,tempUnit);
 //
-//                    //    Log.d("JSONARRAY", "onResponse: " + );
+//
+//                        gravTexview.setText(String.format("%.2f",grav));
+//                        tempTextView.setText(String.format("%.2f", temp));
+//        //----------------------------------
 //
 //                    } catch (JSONException e) {
 //                        e.printStackTrace();

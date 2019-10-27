@@ -73,7 +73,6 @@
         android:layout_marginEnd="67dp"
         android:layout_marginStart="233dp"
         android:text="@string/_0_0"
-
         android:textSize="20sp"
         android:textStyle="bold" />
 
@@ -92,7 +91,7 @@
         android:textSize="20sp" />
 
     <TextView
-        android:id="@+id/rgGavity"
+        android:id="@+id/updatetxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -100,9 +99,36 @@
         android:layout_alignParentStart="true"
         android:layout_marginBottom="300dp"
         android:layout_marginLeft="12dp"
-        android:layout_marginEnd="100dp"
+        android:layout_marginEnd="230dp"
         android:layout_marginStart="20dp"
-        android:text="Updated x min ago"
+        android:text="Updated"
+        android:textSize="20sp" />
+    <TextView
+        android:id="@+id/timelast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="300dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginEnd="120dp"
+        android:layout_marginStart="120dp"
+        android:text="x"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/agotxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="300dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginStart="240dp"
+        android:text="ago"
         android:textSize="20sp" />
 
 

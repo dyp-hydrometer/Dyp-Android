@@ -32,9 +32,9 @@ public class Prefs {
     }
 
     public String getDefaultTemp() {
-        return String.valueOf(preferences.edit().putString("temp_unit","F"));
+        return String.valueOf(preferences.getString("temp_unit","F"));
     }
     public String getDefaultGravity() {
-        return String.valueOf(preferences.edit().putString("g_unit","Brix"));
+        return String.valueOf(preferences.getString("g_unit","Brix"));
     }
 }

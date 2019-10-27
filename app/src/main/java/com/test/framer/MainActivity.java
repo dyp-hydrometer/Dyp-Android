@@ -12,6 +12,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import com.test.framer.util.Prefs;
+import static com.test.framer.UnitFragment.gravUnit;
+import static com.test.framer.UnitFragment.tempUnit;
 
 //import static java.lang.Thread.currentThread;
 //import android.widget.Toast;
@@ -20,6 +23,7 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawer;
     final Handler refreshHandler = new Handler();
+    private Prefs pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+     // get the units save in the shared preferences
+        pref = new Prefs(this);
+        gravUnit = pref.getDefaultGravity();
+        tempUnit = pref.getDefaultTemp();
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
@@ -92,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        public void run() {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                 new homeFragment()).commit();
-        Refresh(2000);
+        Refresh(10000);
     }
 
 //        public void stop() {
