@@ -9,6 +9,7 @@
     <string name="_0_0">0.0</string>
     <string name="temperature">Temperature:</string>
     <string name="f">F</string>
+    <string name="percent">% BAT</string>
 
     <string name="radiobutton">RadioButton</string>
     <string name="plato">Plato</string>
@@ -26,4 +27,13 @@
     <string name="save">Save</string>
     <string name="_0_0_">0.0</string>
     <string name="new_brewing_profile">New Brewing Profile</string>
+    <string name="server_ip">Server IP</string>
+
+    <string name="data_request_interval">Data request interval</string>
+    <string name="pi_ip_address">Eg: 127.0.0.1</string>
+
+    <string name="dyp_id">Dyp Id</string>
+    <string name="in_min">in min</string>
+    <string name="enter_1_digit_id">enter 1 digit id</string>
+    <string name="settings">Settings</string>
 </resources>

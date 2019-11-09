@@ -37,4 +37,47 @@ public class Prefs {
     public String getDefaultGravity() {
         return String.valueOf(preferences.getString("g_unit","Brix"));
     }
+
+    public void savePiIP(String newIp) {
+        String PiIP = preferences.getString("ip_address", "127.0.0.1");
+
+        if ( PiIP!= newIp) {
+            // Save the new gravity unit if it is different
+            preferences.edit().putString("ip_address", newIp).apply();
+        }
+
+    }
+    public String getPiIP() {
+        return String.valueOf(preferences.getString("ip_address","127.0.0.1"));
+    }
+
+    public void saveDypId(String newDypId) {
+        String DypId = preferences.getString("dyp_id", "1");
+
+        if ( DypId!= newDypId) {
+            // Save the new gravity unit if it is different
+            preferences.edit().putString("dyp_id", newDypId).apply();
+        }
+
+    }
+    public String getDypId() {
+        return String.valueOf(preferences.getString("dyp_id","1"));
+    }
+
+    public void saveRInterval(long newRInterval) {
+        long Rinterval = preferences.getLong("interval", 40000);
+
+        if ( Rinterval!= newRInterval) {
+            // Save the new gravity unit if it is different
+            preferences.edit().putLong("interval", newRInterval).apply();
+        }
+
+    }
+    public long getInterval() {
+        return preferences.getLong("interval",40000);
+    }
+
+
+
+
 }

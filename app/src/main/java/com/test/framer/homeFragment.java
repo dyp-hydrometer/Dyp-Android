@@ -1,7 +1,5 @@
 package com.test.framer;
 
-import android.os.Handler;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,6 +16,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONArray;
@@ -26,6 +25,12 @@ import org.json.JSONObject;
 import java.util.Random;
 import static com.test.framer.UnitFragment.gravUnit;
 import static com.test.framer.UnitFragment.tempUnit;
+
+import static com.test.framer.UnitFragment.stDypIP;
+import static com.test.framer.UnitFragment.stDypId;
+import static com.test.framer.UnitFragment.interval;
+
+import com.test.framer.model.TimeElapsed;
 import com.test.framer.model.Gravity;
 import com.test.framer.model.temperature;
 
@@ -33,7 +38,7 @@ import javax.xml.transform.Templates;
 
 
 public class homeFragment extends Fragment {
-
+    private TextView txtTimeAgo;
     private TextView gravTexview;
     private TextView tempTextView;
     private TextView unitGrav;
@@ -46,10 +51,9 @@ public class homeFragment extends Fragment {
     private double temp=0;
     private static Gravity G;
     private static temperature T;
-
-
-
-
+    private long lastTimeGotData=System.currentTimeMillis();   // the late time you get the data in millisecond
+    String timeAgo="";
+    private StringBuffer url;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -61,6 +65,7 @@ public class homeFragment extends Fragment {
         refreshBtn = v.findViewById(R.id.refresh);
         unitGrav = v.findViewById(R.id.gravityUnit);
         unitTemp = v.findViewById(R.id.tempUnit);
+        txtTimeAgo = v.findViewById(R.id.timelast);
 
         // create a new instance of the singleton if it does not exist
         queue = DypSingletonAPI.getInstance(getActivity().getApplicationContext())
@@ -109,14 +114,20 @@ public class homeFragment extends Fragment {
                             temp=jsonbject.getDouble("id");
 
                             //---------------------------- new
+                            //lastTimeGotData = System.currentTimeMillis();
+
                             unitGrav.setText(gravUnit);
                             unitTemp.setText(tempUnit);
                             grav = Gravity.prefGravUnit(grav,gravUnit);
                             temp = temperature.prefTemprature(temp,tempUnit);
 
-
                             gravTexview.setText(String.format("%.2f",grav));
                             tempTextView.setText(String.format("%.2f", temp));
+                            //1573096170
+                            timeAgo = TimeElapsed.getTimeAgo(lastTimeGotData);
+                            txtTimeAgo.setText(timeAgo);
+                            lastTimeGotData = System.currentTimeMillis(); // set the last update time
+
                             //----------------------------------
 
                         } catch (JSONException e) {
@@ -132,9 +143,19 @@ public class homeFragment extends Fragment {
 
         queue.add(jsonObjectRequest);
 
-//------------------------------------------------------------------------
+
+//----------------------------------------------
+        // build the url
+        url = new StringBuffer("http://");
+        url.append(stDypIP);
+        url.append(":5000/api/hydrometers/");
+        url.append(stDypId+"/data/last");  //< append the Dyp id
+
+        // print the url here to chen
+
 
         // Json Array request
+
 
 // Json Array request
         //---------Get the last data entry of the hydrometer, Specific gravity and temperature
@@ -206,7 +227,6 @@ public class homeFragment extends Fragment {
         //gravTexview.setText(String.valueOf(70));
 
 
-
     }
 //    public void content(){
 //        homeFragment hf = new homeFragment();
@@ -232,15 +252,6 @@ public class homeFragment extends Fragment {
 //
 //    }
 
-
 //    FragmantClass rSum = new FragmantClass();
 //    getSupportFragmentManager().beginTransaction().remove(rSum).commit();
-
-
-
-
-
-
-
-
 }

@@ -117,7 +117,7 @@
         android:text="x"
         android:textSize="20sp" />
 
-    <TextView
+    <!-- <TextView
         android:id="@+id/agotxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -130,6 +130,7 @@
         android:layout_marginStart="240dp"
         android:text="ago"
         android:textSize="20sp" />
+    -->
 
 
     <Button
