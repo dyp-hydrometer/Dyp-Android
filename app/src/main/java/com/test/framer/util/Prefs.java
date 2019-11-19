@@ -80,6 +80,20 @@ public class Prefs {
         return preferences.getLong("interval",40000);
     }
 
+    public void getStatus(String Newstatus) {
+        String status = preferences.getString("status", "begin");
+
+        if ( status!= Newstatus) {
+            // Save the new gravity unit if it is different
+            preferences.edit().putString("status", Newstatus).apply();
+        }
+
+    }
+    public String getStaus() {
+        return preferences.getString("status","begin");
+    }
+
+
 
 
 

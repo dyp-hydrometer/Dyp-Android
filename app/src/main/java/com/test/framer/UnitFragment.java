@@ -14,10 +14,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.test.framer.util.Prefs;
 import android.widget.Toast;
 import com.test.framer.model.TimeElapsed;
 import com.test.framer.model.regexIP;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.test.framer.MainActivity.ProfileId;
+import static com.test.framer.MainActivity.brewStatus;
 import static com.test.framer.MainActivity.url1 ;
 import static com.test.framer.MainActivity.portNum ;
 import static com.test.framer.MainActivity.stDypId ;
@@ -29,6 +41,7 @@ import static com.test.framer.model.regexIP.isValidIP;
 public class UnitFragment extends Fragment implements View.OnClickListener{
     final private String LOG ="Unit";
     private Prefs prefs;
+    RequestQueue queue;
     private RadioGroup Gravityrg;
     private RadioButton gravityRb;
     private RadioButton brixRb;
@@ -115,20 +128,14 @@ public class UnitFragment extends Fragment implements View.OnClickListener{
                             return;
                         }
 
-
-
                      if(!addressET.getText().toString().isEmpty() && !dypIdET.getText().toString().isEmpty()){
                          stDypIP = addressET.getText().toString().trim();
                          stDypId = dypIdET.getText().toString().trim();
                          prefs.savePiIP(stDypIP);
                          prefs.saveDypId(stDypId);
-
                          // build the url1 for the api
                          String temp = "http://"+stDypIP+":"+portNum+"/api/hydrometers/"+stDypId+"/data/last";
-
                          url1.replace(0,url1.length(),temp);
-
-
                      }
                      else if(!addressET.getText().toString().isEmpty()){
                          stDypIP = addressET.getText().toString().trim();
@@ -185,8 +192,35 @@ public class UnitFragment extends Fragment implements View.OnClickListener{
         return v;
     }
 
+    public void postInternal(){
+        //< send the interval of receiving data to the Pi(server)  via Post request
+        StringRequest postRequest= new StringRequest(Request.Method.POST,
+                "https://jsonplaceholder.typicode.com/todos/1",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String str) {
+                        try {
+                            Log.d("POST", "POST " + ProfileId);
+                        } catch (StackOverflowError e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Error", "onErrorResponse: " + error.getMessage());
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams()
+            {    Map<String, String> params = new HashMap<String,String>();
+                params.put("interval",String.valueOf(interval));
+                return params;
+            }
+        };
 
-
+        queue.add(postRequest);
+    }
     @Override
     public void onClick(View view) {
         prefs = new Prefs(getActivity());
@@ -226,19 +260,7 @@ public class UnitFragment extends Fragment implements View.OnClickListener{
                 break;
         }
 
-//        switch(view.getId()) {
-//
-//            case R.id.saveSetting:
-//                stDypIP = addressET.getText().toString();
-//               // prefs.savePiIP (stDypIP);
-//
-//                Toast.makeText(getActivity(), "ip"+stDypIP, Toast.LENGTH_LONG).show();
-//                break;
-//
-//            case R.id.cancelSetting:
-//                Toast.makeText(getActivity(), "cancelling ", Toast.LENGTH_LONG).show();
-//                break;
-//        }
+
 
 
 

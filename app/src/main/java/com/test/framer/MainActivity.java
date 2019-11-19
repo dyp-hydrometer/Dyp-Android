@@ -3,24 +3,17 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import com.test.framer.model.profile;
-
-
-import com.test.framer.model.adapter.RecyclerViewAdapter;
 import com.test.framer.util.Prefs;
 import static com.test.framer.UnitFragment.gravUnit;
 import static com.test.framer.UnitFragment.tempUnit;
@@ -54,7 +47,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static String portNum = "5000" ;
     public static String stDypIP="";
     public static String stDypId="";
-    public static int ProfileId;
+    static int ProfileId;
+    static String brewName;
+
+    static String brewStatus;
     public static long interval;
     private Spinner spinner;
 
@@ -106,8 +102,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         stDypIP =pref.getPiIP();
         stDypId =pref.getDypId();
         interval=pref.getInterval();
-
-
+        brewStatus = pref.getStaus();
 
         // build the url1(last reading) for the api
         url1 = new StringBuffer("http://");
@@ -140,9 +135,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
         GetProfileList();
         setToolbarData();
-
-
-
     }
 
     @Override
@@ -377,6 +369,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
        // Toast.makeText(parent.getContext(), "It happening", Toast.LENGTH_SHORT).show();
         profile p = (profile) parent.getSelectedItem();
         ProfileId = p.getId();
+        brewName = p.getName();
         //Toast.makeText(this, "Selected " + ProfileId, Toast.LENGTH_LONG).show();
         ToastProfileData(p);
     }

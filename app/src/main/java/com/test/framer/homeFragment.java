@@ -1,9 +1,15 @@
 package com.test.framer;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +17,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v4.app.NotificationCompat;
+
+import android.support.v7.app.AppCompatActivity;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -19,17 +28,20 @@ import com.android.volley.VolleyError;
 
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+
+import static android.support.v4.content.ContextCompat.getSystemService;
 import static com.test.framer.UnitFragment.gravUnit;
 import static com.test.framer.UnitFragment.tempUnit;
 import static com.test.framer.MainActivity.url1 ;
 import static com.test.framer.MainActivity.ProfileId;
+import static com.test.framer.MainActivity.brewName;
+import static com.test.framer.MainActivity.brewStatus;
 
 
 import com.android.volley.toolbox.StringRequest;
@@ -72,6 +84,15 @@ public class homeFragment extends Fragment {
         // create a new instance of the singleton if it does not exist
         queue = DypSingletonAPI.getInstance(getActivity().getApplicationContext())
                 .getRequestQueue();
+
+        if(brewStatus.equals("begin")) {
+            startBtn.setBackgroundColor(0xFFFF0000);
+            startBtn.setText("END BREWING");
+
+        }else{
+            startBtn.setBackgroundColor(getResources().getColor(R.color.colorGreen)); // red color
+            startBtn.setText("START BREWING");
+        }
 
         // Json Object request
 
@@ -127,9 +148,7 @@ public class homeFragment extends Fragment {
                             timeAgo = TimeElapsed.getTimeAgo(lastTimeGotData);
                             txtTimeAgo.setText(timeAgo);
                             lastTimeGotData = System.currentTimeMillis(); // set the last update time
-
                             //----------------------------------
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -198,8 +217,20 @@ public class homeFragment extends Fragment {
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Starting brew " + ProfileId, Toast.LENGTH_LONG).show();
-                //< send the profile id to the PI via Post request
+
+                if(brewStatus.equals("begin")) {
+                    startBtn.setBackgroundColor(getResources().getColor(R.color.colorGreen)); // red color
+                    startBtn.setText("START BREWING");
+                    brewStatus="end";
+                    Toast.makeText(getContext(), "Ending brew for " + brewName.toUpperCase(), Toast.LENGTH_LONG).show();
+
+                }else{
+                    startBtn.setBackgroundColor(0xFFFF0000);
+                    startBtn.setText("END BREWING");
+                    brewStatus="begin";
+                    Toast.makeText(getContext(), "Starting brew for " + brewName.toUpperCase(), Toast.LENGTH_LONG).show();
+                }
+            //< send the profile id to the PI via Post request
                 StringRequest postRequest= new StringRequest(Request.Method.POST,
                         "https://jsonplaceholder.typicode.com/todos/1",
                         new Response.Listener<String>() {
@@ -208,6 +239,7 @@ public class homeFragment extends Fragment {
                                 try {
                                     // num = random.nextInt(50) + 1;    // generate the random number from
                                     Log.d("POST", "POST " + ProfileId);
+
 
                                 } catch (StackOverflowError e) {
                                     e.printStackTrace();
@@ -221,9 +253,15 @@ public class homeFragment extends Fragment {
                 }){
                 @Override
                 protected Map<String, String> getParams()
-                {
-                    Map<String, String>  params = new HashMap<String, String>();
-                    params.put("id", String.valueOf(ProfileId));
+                {    Map<String, String> params = new HashMap<String, String>();
+                    if(brewStatus.equals("begin")) {
+                        params.put("id", String.valueOf(ProfileId));
+                        params.put("status", "end");
+                     }
+                     else{
+                        params.put("id", String.valueOf(ProfileId));
+                        params.put("status", "begin");
+                     }
                     return params;
                 }
               };
@@ -247,14 +285,25 @@ public class homeFragment extends Fragment {
               }
             });
 
-
 //            refreshHandler.postDelayed(runnable,1000 );
           // refreshHandler.run();
-
         return v;
-
        // return content(v);
     }
+
+    // Creates and displays a notification
+
+//    private void addNotification() {
+//
+//        // Builds your notification
+//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,1)
+//                .setSmallIcon(R.drawable.dyp)
+//                .setContentTitle("My notification")
+//                .setContentText("Much longer text that cannot fit one line...")
+//                .setStyle(new NotificationCompat.BigTextStyle()
+//                        .bigText("Much longer text that cannot fit one line..."))
+//                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+//    }
 
 
 

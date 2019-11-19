@@ -158,7 +158,6 @@
         android:layout_marginLeft="12dp"
         android:layout_marginStart="20dp"
         android:text="Start Brewing"
-        android:background="@color/colorGreen"
         android:textColor="@color/colorBlack"
         android:textSize="20sp" />
 
