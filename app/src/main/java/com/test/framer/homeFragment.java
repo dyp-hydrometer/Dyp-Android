@@ -4,13 +4,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -22,20 +22,20 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import static com.test.framer.UnitFragment.gravUnit;
 import static com.test.framer.UnitFragment.tempUnit;
+import static com.test.framer.MainActivity.url1 ;
+import static com.test.framer.MainActivity.ProfileId;
 
-import static com.test.framer.UnitFragment.stDypIP;
-import static com.test.framer.UnitFragment.stDypId;
-import static com.test.framer.UnitFragment.interval;
 
+import com.android.volley.toolbox.StringRequest;
 import com.test.framer.model.TimeElapsed;
 import com.test.framer.model.Gravity;
 import com.test.framer.model.temperature;
-
-import javax.xml.transform.Templates;
-
 
 public class homeFragment extends Fragment {
     private TextView txtTimeAgo;
@@ -44,25 +44,27 @@ public class homeFragment extends Fragment {
     private TextView unitGrav;
     private TextView unitTemp;
     private Button refreshBtn;
+    private Button startBtn;
     RequestQueue queue;
     Random random = new Random();
-    private int num=0;
-    private double grav=0;   // gravity of the Hydrometer
-    private double temp=0;
+    private int num = 0;
+    private double grav = 0;   // gravity of the Hydrometer
+    private double temp = 0;
     private static Gravity G;
     private static temperature T;
-    private long lastTimeGotData=System.currentTimeMillis();   // the late time you get the data in millisecond
-    String timeAgo="";
-    private StringBuffer url;
+    private long lastTimeGotData = System.currentTimeMillis();   // the late time you get the data in millisecond
+    String timeAgo = "";
+
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View v =inflater.inflate(R.layout.home_page , container, false);
+        View v = inflater.inflate(R.layout.home_page, container, false);
         gravTexview = v.findViewById(R.id.gravityValue);
         tempTextView = v.findViewById(R.id.tempValue);
         refreshBtn = v.findViewById(R.id.refresh);
+        startBtn = v.findViewById(R.id.startBrew);
         unitGrav = v.findViewById(R.id.gravityUnit);
         unitTemp = v.findViewById(R.id.tempUnit);
         txtTimeAgo = v.findViewById(R.id.timelast);
@@ -73,8 +75,8 @@ public class homeFragment extends Fragment {
 
         // Json Object request
 
-      //  http://192.168.43.244:5000/api/hydrometers/2/last
-       // "https://jsonplaceholder.typicode.com/todos/1", null,
+        //  http://192.168.43.244:5000/api/hydrometers/2/last
+        // "https://jsonplaceholder.typicode.com/todos/1", null,
 //            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
 //                    "https://jsonplaceholder.typicode.com/todos/1", null,
 //                    new Response.Listener<JSONObject>() {
@@ -98,9 +100,6 @@ public class homeFragment extends Fragment {
 //
 //            queue.add(jsonObjectRequest);
 
-
-
-
 //----------------------------mock API object------------------------
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
                 "https://jsonplaceholder.typicode.com/todos/1", null,
@@ -110,18 +109,19 @@ public class homeFragment extends Fragment {
                         try {
                             // num = random.nextInt(50) + 1;    // generate the random number from
                             Log.d("JSON", "onResponse: " + jsonbject.getInt("id"));
-                            grav=jsonbject.getDouble("id");
-                            temp=jsonbject.getDouble("id");
+                            grav = jsonbject.getDouble("id");
+                            temp = jsonbject.getDouble("id");
 
                             //---------------------------- new
                             //lastTimeGotData = System.currentTimeMillis();
+                            Log.d("URL", "onResponse" + url1);
 
                             unitGrav.setText(gravUnit);
                             unitTemp.setText(tempUnit);
-                            grav = Gravity.prefGravUnit(grav,gravUnit);
-                            temp = temperature.prefTemprature(temp,tempUnit);
+                            grav = Gravity.prefGravUnit(grav, gravUnit);
+                            temp = temperature.prefTemprature(temp, tempUnit);
 
-                            gravTexview.setText(String.format("%.2f",grav));
+                            gravTexview.setText(String.format("%.2f", grav));
                             tempTextView.setText(String.format("%.2f", temp));
                             //1573096170
                             timeAgo = TimeElapsed.getTimeAgo(lastTimeGotData);
@@ -145,11 +145,7 @@ public class homeFragment extends Fragment {
 
 
 //----------------------------------------------
-        // build the url
-        url = new StringBuffer("http://");
-        url.append(stDypIP);
-        url.append(":5000/api/hydrometers/");
-        url.append(stDypId+"/data/last");  //< append the Dyp id
+
 
         // print the url here to chen
 
@@ -199,19 +195,57 @@ public class homeFragment extends Fragment {
 //            }
 //        });
 //        queue.add(jsonArrayRequest);
+        startBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Starting brew " + ProfileId, Toast.LENGTH_LONG).show();
+                //< send the profile id to the PI via Post request
+                StringRequest postRequest= new StringRequest(Request.Method.POST,
+                        "https://jsonplaceholder.typicode.com/todos/1",
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String str) {
+                                try {
+                                    // num = random.nextInt(50) + 1;    // generate the random number from
+                                    Log.d("POST", "POST " + ProfileId);
+
+                                } catch (StackOverflowError e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d("Error", "onErrorResponse: " + error.getMessage());
+                            }
+                }){
+                @Override
+                protected Map<String, String> getParams()
+                {
+                    Map<String, String>  params = new HashMap<String, String>();
+                    params.put("id", String.valueOf(ProfileId));
+                    return params;
+                }
+              };
+
+                queue.add(postRequest);
+
+
+            }
+        });
+
 
 
             refreshBtn.setOnClickListener(new View.OnClickListener(){
               @Override
               public void onClick(View v){
-                  homeFragment hf = new homeFragment();
+                 // homeFragment hf = new homeFragment();
                   FragmentManager manager = getFragmentManager();
                   manager.beginTransaction()
                   .replace(R.id.fragment_container,new homeFragment()).commit();
-                         // new homeFragment()).commit();
+
               }
             });
-
 
 
 //            refreshHandler.postDelayed(runnable,1000 );
@@ -220,38 +254,8 @@ public class homeFragment extends Fragment {
         return v;
 
        // return content(v);
-
-
-
-        //gravTexview.setText(String.valueOf(6));
-        //gravTexview.setText(String.valueOf(70));
-
-
     }
-//    public void content(){
-//        homeFragment hf = new homeFragment();
-//        FragmentManager manager = getFragmentManager();
-//        manager.beginTransaction()
-//                .replace(R.id.fragment_container,new homeFragment()).commit();
-//
-//        Refresh(1000, v);
-//        // onCreateView().getAutofillId();
-//        // public Handler refreshHandler = new Handler();
-//    }
-//
-//    public void Refresh(int milliseconds){
-//        Runnable runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                // do updates
-//               content();
-//            }
-//
-//        };
-//        refreshHandler.postDelayed(runnable, milliseconds);
-//
-//    }
 
-//    FragmantClass rSum = new FragmantClass();
-//    getSupportFragmentManager().beginTransaction().remove(rSum).commit();
+
+
 }

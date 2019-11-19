@@ -17,6 +17,11 @@ tools:showIn="navigation_view">
         android:id="@+id/nav_brew_profile"
         android:icon="@drawable/ic_brew_profile"
         android:title="Brew profile" />
+
+    <item
+        android:id="@+id/nav_profile_list"
+        android:icon="@drawable/ic_list_profile"
+        android:title="All brew profile" />
     <item
         android:id="@+id/nav_calibrate"
         android:icon="@drawable/ic_calibrate"

@@ -189,8 +189,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="31dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="35dp"
+        android:layout_marginEnd="67dp"
         android:text="@string/cancel" />
 
     <Button
@@ -199,8 +199,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="36dp"
-        android:layout_marginEnd="264dp"
+        android:layout_marginBottom="34dp"
+        android:layout_marginEnd="212dp"
+        android:background="#03A9F4"
         android:text="@string/save" />
 
 

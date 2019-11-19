@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="6dp"
+    app:cardElevation="6dp">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="96dp"
+        android:visibility="visible"
+        app:cardBackgroundColor="#C3F2F8"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="11dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="14dp"
+        >
+       <!-- tools:layout_editor_absoluteX="78dp"
+        tools:layout_editor_absoluteY="39dp"  >
+        -->
+
+
+        <TextView
+            android:text="@string/name_beer_here"
+            android:id="@+id/beerName"
+            android:textSize="15sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorBlack"/>
+        <TextView
+            android:text="@string/specific_gravity"
+            android:id="@+id/gravText"
+            android:padding="8dp"
+            android:textSize="15sp"
+            android:layout_below="@+id/beerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorBlack"/>
+        <TextView
+            android:text="@string/temp"
+            android:id="@+id/tempText"
+            android:padding="8dp"
+            android:textSize="15sp"
+            android:layout_below="@+id/gravText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorBlack"
+           />
+        <TextView
+            android:text="Description"
+            android:id="@+id/descriptionBeer"
+            android:padding="8dp"
+            android:textSize="15sp"
+            android:layout_below="@+id/tempText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorBlack"
+            />
+
+        <ImageView
+            android:layout_width="39dp"
+            android:layout_height="35dp"
+            android:layout_alignParentEnd="true"
+            android:background="@android:drawable/sym_contact_card"
+            android:contentDescription="TODO" />
+
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>

@@ -61,7 +61,10 @@ public class Prefs {
 
     }
     public String getDypId() {
+
+       // return String.valueOf(preferences.getString("dyp_id","1"));
         return String.valueOf(preferences.getString("dyp_id","1"));
+
     }
 
     public void saveRInterval(long newRInterval) {

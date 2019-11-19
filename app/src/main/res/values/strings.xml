@@ -1,9 +1,9 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     <string name="app_name">Dyp hydrometer</string>
     <string name="hydrometer">Hydrometer</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="gravity">Gravity Unit:</string>
+    <string name="gravity">Specific Gravity:</string>
     <string name="defaultgravity">0.0</string>
     <string name="brix">Brix</string>
     <string name="_0_0">0.0</string>
@@ -14,7 +14,7 @@
     <string name="radiobutton">RadioButton</string>
     <string name="plato">Plato</string>
     <string name="select_preferred_unit">Select preferred Unit</string>
-    <string name="specific_gravity">Specific gravity</string>
+    <string name="specific_grav">Specific gravity</string>
     <string name="gravity_unit">Gravity Unit</string>
     <string name="temperture_unit">Temperature Unit:</string>
     <string name="celsius">Celsius</string>
@@ -29,11 +29,23 @@
     <string name="new_brewing_profile">New Brewing Profile</string>
     <string name="server_ip">Server IP</string>
 
-    <string name="data_request_interval">Data request interval</string>
+    <string name="data_request_interval">Request interval(min)</string>
     <string name="pi_ip_address">Eg: 127.0.0.1</string>
 
     <string name="dyp_id">Dyp Id</string>
     <string name="in_min">in min</string>
     <string name="enter_1_digit_id">enter 1 digit id</string>
     <string name="settings">Settings</string>
+    <string name="name_beer_here">Name Beer Here</string>
+    <string name="specific_gravity">Specific gravity</string>
+    <string name="temp">Temperature</string>
+    <string-array name="numbers">
+
+        <item  android:color="#FFFFFF">Select beer</item>
+        <item>One</item>
+        <item>Two</item>
+        <item>Three</item>
+        <item>Four</item>
+        <item>Five</item>
+    </string-array>
 </resources>
