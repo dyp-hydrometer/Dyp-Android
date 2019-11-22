@@ -2,18 +2,12 @@ package com.test.framer.model;
 import java.lang.Math;
 
 public class Gravity {
-//    private float gravity;
-//
-//    public Gravity(float gravity) {
-//        this.gravity = gravity;
-//    }
-//
-//    public void setGravity(float gravity) {
-//        this.gravity = gravity;
-//    }
-
-    // arguments: gravity in specific gravity(not unt)
-    // return the prefer unit in brix, plato
+    /**
+     *  Convert the specific gravity in the preferred unit
+     * @param SG Specific gravity
+     * @param prefGravity preferred unit
+     * @return Double Specific gravity in the preferred unit unit in brix, plato
+     */
     public static double prefGravUnit(double SG,String prefGravity ){
         double brix,plato;
         if(prefGravity=="Brix"){
@@ -28,10 +22,14 @@ public class Gravity {
             return SG;
         }
     }
-//ABV = alcohol by volume, OG = original gravity, and FG =
-// gravity. So, using this formula with a beer having an OG
-// of 1.055 and a FG of 1.015, your ABV would be 5.25%.
-    public static float ABV(float OG, float FG){
-        return (float) ((OG-FG)*131.25);
+
+    /**
+     *  estimate the alcohol by volume base on the initial specific gravity and the final one
+     * @param OG Origin Gravity
+     * @param FG Final Gravity
+     * @return Alcohol by volume
+     */
+    public static Double ABV(Double OG, Double FG){
+        return  ((OG-FG)*131.25);
     }
 }

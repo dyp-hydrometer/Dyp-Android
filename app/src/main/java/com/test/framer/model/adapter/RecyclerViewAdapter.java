@@ -7,14 +7,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.test.framer.R;
 import com.test.framer.model.profile;
-
 import java.util.List;
 
-// https://github.com/codepath/android_guides/wiki/Using-the-RecyclerView
+/**
+ * http://github.com/codepath/android_guides/wiki/Using-the-RecyclerView
+ *
+ */
 
+/**
+ * Bind the recycleview to the data
+ */
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
     private Context context;
     private List<profile> ProfileList;

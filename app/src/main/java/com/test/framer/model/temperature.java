@@ -1,25 +1,19 @@
 package com.test.framer.model;
 
 public class temperature {
-    float temperature;
-
-    public temperature(float temperature) {
-        this.temperature = temperature;
-    }
-
-//    public static void setTemperature(float temperature) {
-//        this.temperature = temperature;
-//    }
-
-    // Argument temperature in Fahrenheit , the preferred temperature
+    /**
+     *  convert temoerature into the preferred unit
+     * @param tempF temperature in Fahrenheit
+     * @param T  unit
+     * @return  temperature in preferred unit
+     */
 
     public static double prefTemprature(double tempF, String T ){
-        if(T=="C"){
-            return ( tempF - 32) * (5/9);
+        if(T.equalsIgnoreCase("C")){
+            return (( tempF - 32) * 0.555);
         }
         else{
             return tempF;
         }
-
     }
 }

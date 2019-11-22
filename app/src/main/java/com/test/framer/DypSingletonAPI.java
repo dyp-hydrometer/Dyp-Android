@@ -9,8 +9,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
-
-
+/**
+ *  Singletin API to manage a API call with volley libary
+ */
 
 // singleton is the better way, you create the object once, but you have many instances
 public class DypSingletonAPI {

@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import java.lang.String;
 
+/**
+ * Save startup data in the shared preference(XML file)
+ */
+
 public class Prefs {
     private SharedPreferences preferences;
-
-
     public Prefs(Activity activity) {
         this.preferences = activity.getPreferences(Context.MODE_PRIVATE);
     }
@@ -20,7 +22,6 @@ public class Prefs {
         }
 
     }
-
     public void saveGravityUnit(String newGUnit) {
         String gUnit = preferences.getString("g_unit", "Brix");
 
@@ -30,7 +31,6 @@ public class Prefs {
         }
 
     }
-
     public String getDefaultTemp() {
         return String.valueOf(preferences.getString("temp_unit","F"));
     }
@@ -40,12 +40,10 @@ public class Prefs {
 
     public void savePiIP(String newIp) {
         String PiIP = preferences.getString("ip_address", "127.0.0.1");
-
         if ( PiIP!= newIp) {
             // Save the new gravity unit if it is different
             preferences.edit().putString("ip_address", newIp).apply();
         }
-
     }
     public String getPiIP() {
         return String.valueOf(preferences.getString("ip_address","127.0.0.1"));
@@ -61,12 +59,9 @@ public class Prefs {
 
     }
     public String getDypId() {
-
        // return String.valueOf(preferences.getString("dyp_id","1"));
         return String.valueOf(preferences.getString("dyp_id","1"));
-
     }
-
     public void saveRInterval(long newRInterval) {
         long Rinterval = preferences.getLong("interval", 40000);
 
@@ -80,8 +75,8 @@ public class Prefs {
         return preferences.getLong("interval",40000);
     }
 
-    public void getStatus(String Newstatus) {
-        String status = preferences.getString("status", "begin");
+    public void saveStatus(String Newstatus) {
+        String status = preferences.getString("status", "true");
 
         if ( status!= Newstatus) {
             // Save the new gravity unit if it is different
@@ -89,12 +84,23 @@ public class Prefs {
         }
 
     }
-    public String getStaus() {
-        return preferences.getString("status","begin");
+    public String getStatus() {
+        return preferences.getString("status","true");
     }
 
-
-
-
+    /**
+     * save the origin gravity
+     * @param NewOG
+     */
+    public void saveOG(String NewOG) {
+        String og = preferences.getString("og", "0");
+        if ( og!= NewOG) {
+            // Save the new gravity unit if it is different
+            preferences.edit().putString ("og", NewOG).apply();
+        }
+    }
+    public String getOG() {
+        return preferences.getString("og","0");
+    }
 
 }

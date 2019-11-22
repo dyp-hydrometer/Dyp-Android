@@ -1,6 +1,4 @@
 package com.test.framer;
-
-import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,51 +11,43 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.test.framer.util.Prefs;
 import android.widget.Toast;
 import com.test.framer.model.TimeElapsed;
-import com.test.framer.model.regexIP;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.test.framer.MainActivity.ProfileId;
-import static com.test.framer.MainActivity.brewStatus;
+import org.json.JSONException;
+import org.json.JSONObject;
+import java.io.UnsupportedEncodingException;
 import static com.test.framer.MainActivity.url1 ;
+import static com.test.framer.MainActivity.urlInterval;
 import static com.test.framer.MainActivity.portNum ;
 import static com.test.framer.MainActivity.stDypId ;
 import static com.test.framer.MainActivity.stDypIP ;
 import static com.test.framer.MainActivity.interval;
+import static com.test.framer.model.TimeElapsed.minToHMS;
 import static com.test.framer.model.regexIP.isValidIP;
 
-
+/**
+ * Setting page, set unit, IP, request interval
+ */
 public class UnitFragment extends Fragment implements View.OnClickListener{
-    final private String LOG ="Unit";
     private Prefs prefs;
     RequestQueue queue;
-    private RadioGroup Gravityrg;
-    private RadioButton gravityRb;
-    private RadioButton brixRb;
-    private RadioButton platoRb;
     private EditText addressET;
     private EditText dypIdET;
     private EditText intervalET;
-
+    private RequestQueue requestQueue;
     private Button saveSetiings;
     private Button cancelSetiings;
     public static String tempUnit="C";
     public static String gravUnit=null;
     private String regexNum ="[0-9]+";
-    private String regexIP = "[0-9]+";
     private double minTime;
-
 
     @Nullable
     @Override
@@ -67,40 +57,32 @@ public class UnitFragment extends Fragment implements View.OnClickListener{
 
         View v = inflater.inflate(R.layout.fragment_unit , container, false);
         prefs = new Prefs(getActivity());
-        //Gravityrg =
-              //  v.findViewById(R.id.rgGavity).setOnClickListener(this);
-      // gravityRb =
-               v.findViewById(R.id.rbSpecificGravity).setOnClickListener(this);
-       // brixRb =
+
+        // create a new instance of the singleton if it does not exist
+        queue = DypSingletonAPI.getInstance(getActivity().getApplicationContext())
+                .getRequestQueue();
+                v.findViewById(R.id.rbSpecificGravity).setOnClickListener(this);
                 v.findViewById(R.id.rbBrix).setOnClickListener(this);
-        //platoRb =
                 v.findViewById(R.id.rbPlato).setOnClickListener(this);
-
                 v.findViewById(R.id.rbCelcius).setOnClickListener(this);
-
                 v.findViewById(R.id.rbFahrenheit).setOnClickListener(this);
 
-//                v.findViewById(R.id.Dypaddress).setOnClickListener(this);
-//                v.findViewById(R.id.txtId).setOnClickListener(this);
-//                v.findViewById(R.id.txtinterval).setOnClickListener(this);
-//
                 saveSetiings = (Button)v.findViewById(R.id.saveSetting);
                 cancelSetiings =(Button)v.findViewById(R.id.cancelSetting);
 
-                //cancelSetiings.setOnClickListener(this);
                  addressET =   v.findViewById(R.id.Dypaddress);
                  addressET.setText(stDypIP);
                  dypIdET =  v.findViewById(R.id.txtId);
                  dypIdET.setText(stDypId);
                  intervalET =  v.findViewById(R.id.txtinterval);
                  minTime =  interval * TimeElapsed.millis_min;
-                 Log.d("MIN",String.valueOf(TimeElapsed.millis_min));
-                 intervalET.setText(String.valueOf(minTime));
+                 intervalET.setText(String.valueOf((int)Math.ceil(minTime)));
 
-                saveSetiings.setOnClickListener(new View.OnClickListener() {
+        /**
+         * Handle the save button statement
+         */
+        saveSetiings.setOnClickListener(new View.OnClickListener() {
                     @Override
-
-
                     public void onClick(View view) {
                         //< Data Validation
                         if(isValidIP(addressET.getText().toString().trim())== false) {
@@ -143,36 +125,27 @@ public class UnitFragment extends Fragment implements View.OnClickListener{
 
                          // build the url1 for the api
                          String temp = "http://"+stDypIP+":"+portNum+"/api/hydrometers/"+stDypId+"/data/last";
-
                          url1.replace(0,url1.length(),temp);
-
-
                          Toast.makeText( getActivity(), "Settings saved", Toast.LENGTH_LONG).show();
-                         Log.d("URL1", url1.toString() );
-
                      }
                      else if(!dypIdET.getText().toString().isEmpty()){
-
                          stDypId = dypIdET.getText().toString().trim();
                          prefs.saveDypId(stDypId);
                          // build the url1 for the api
                          String temp = "http://"+stDypIP+":"+portNum+"/api/hydrometers/"+stDypId+"/data/last";
-
                          url1.replace(0,url1.length(),temp);
                      }
-
                      if(!(intervalET.getText().toString().isEmpty())){
-
                          interval = Long.valueOf(intervalET.getText().toString().trim());
                          //convert to milliseconds
                          interval*=TimeElapsed.MINUTE_MILLIS;  // convert form minute to millisecond
                          prefs.saveRInterval(interval);
+                         //Log.d("ErrorPut", " URL interval " + urlInterval);
+                         postInternal();
                      }
                         //go back to the home page
                         FragmentManager manager = getFragmentManager();
                         manager.beginTransaction().replace(R.id.fragment_container,new homeFragment()).commit();
-
-
                     }
                 });
 
@@ -183,51 +156,60 @@ public class UnitFragment extends Fragment implements View.OnClickListener{
                     //go back to the home page
                     FragmentManager manager = getFragmentManager();
                     manager.beginTransaction().replace(R.id.fragment_container,new homeFragment()).commit();
-
-
                 }
             });
-
 
         return v;
     }
 
+    /**
+     * Change the data request interval(time), send a POST request to the PI
+     */
     public void postInternal(){
-        //< send the interval of receiving data to the Pi(server)  via Post request
-        StringRequest postRequest= new StringRequest(Request.Method.POST,
-                "https://jsonplaceholder.typicode.com/todos/1",
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String str) {
-                        try {
-                            Log.d("POST", "POST " + ProfileId);
-                        } catch (StackOverflowError e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
+        requestQueue = Volley.newRequestQueue(getContext());
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlInterval.toString().trim(), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject objres=new JSONObject(response);
+                     Log.d("VOLLEYO :","In response");
+                   // Toast.makeText(getContext(),objres.toString(),Toast.LENGTH_LONG).show();
+                } catch (JSONException e) {
+
+                }
+
+            }
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("Error", "onErrorResponse: " + error.getMessage());
+               Log.d("VOLLEYO", error.getMessage());
             }
-        }){
+        }) {
             @Override
-            protected Map<String, String> getParams()
-            {    Map<String, String> params = new HashMap<String,String>();
-                params.put("interval",String.valueOf(interval));
-                return params;
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public byte[] getBody(){
+                try {
+                    String T = minToHMS((int) interval); //< covert the time into H:M:S format
+                    return T.getBytes("utf-8");
+                } catch (UnsupportedEncodingException uee) {
+                    //Log.v("Unsupported Encoding while trying to get the bytes", data);
+                    return null;
+                }
             }
         };
-
-        queue.add(postRequest);
+        requestQueue.add(stringRequest);
     }
+
     @Override
     public void onClick(View view) {
         prefs = new Prefs(getActivity());
         boolean checked = ((RadioButton) view).isChecked();
         // save the unit selected
         switch(view.getId()){
-
             case R.id.rbSpecificGravity:
                 prefs.saveGravityUnit("SG");
                 gravUnit="SG";
@@ -246,23 +228,16 @@ public class UnitFragment extends Fragment implements View.OnClickListener{
                 break;
         }
         switch(view.getId()) {
-
             case R.id.rbCelcius:
                 prefs.saveTempUnit("C");
                 tempUnit="C";
                 Toast.makeText(getActivity(), "Celsius", Toast.LENGTH_LONG).show();
                 break;
-
             case R.id.rbFahrenheit:
                 prefs.saveTempUnit("F");
                 tempUnit="F";
                 Toast.makeText(getActivity(), "Fahrenheit", Toast.LENGTH_LONG).show();
                 break;
         }
-
-
-
-
-
     }
 }

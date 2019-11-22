@@ -13,6 +13,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.test.framer.model.profile;
 import com.test.framer.util.Prefs;
 import static com.test.framer.UnitFragment.gravUnit;
@@ -26,52 +29,54 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
-
-
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Random;
+
+/**
+ * <h1>Android Application for DYP Bluetooth hydrometer </h1>
+ * <p>
+ * MainActivity
+ * @author Boris
+ * @since 2019-11-01
+ * @Version 1.0
+ *
+ */
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener,NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawer;
     final Handler refreshHandler = new Handler();
     final Handler refreshBattHandler = new Handler();
     private Prefs pref;
-    private int batPercent=50;
+    private double batPercent=0.0;
     RequestQueue queue;
     private TextView batt;
     Random random = new Random();
-    public static StringBuffer url1,urlGetProfle;
-    public static String portNum = "5000" ;
+    public static StringBuffer url1,urlGetProfle,urlBattery, urlInterval,urlStart,urlProfile;
+    public static final String portNum = "5000" ;
     public static String stDypIP="";
     public static String stDypId="";
     static int ProfileId;
     static String brewName;
-
-    static String brewStatus;
+    static Double brewSetGrav;
+    static Double lastGrav=0.0;
+    static Double lastTemp=0.0;
+    static String brewStatus = "idle";
+    static Double o_gravity=0.0;
     public static long interval;
+    public static String Pid="0";
     private Spinner spinner;
-
-
+    private RequestQueue requestqueue;
     public ArrayList<profile> profileArrayList1;
     private ArrayAdapter<profile> arrayAdapter1;
-
-
-
-
     private int BPid;
     private String BPName;
     private double BPGrav;
     private double BPTemp;
     private String BPDesc;
-
-
-//    // recycle view
-//    private RecyclerView recyclerView;
-//    private RecyclerViewAdapter recyclerViewAdapter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,26 +88,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         batt = findViewById(R.id.bat);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
-
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
-
         NavigationView navigationView = findViewById(R.id.nav_view);
-
         navigationView.setNavigationItemSelectedListener(this);
-
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-     // get the units save in the shared preferences
+     // get the all data save in the shared preferences
         pref = new Prefs(this);
         gravUnit = pref.getDefaultGravity();
         tempUnit = pref.getDefaultTemp();
         stDypIP =pref.getPiIP();
         stDypId =pref.getDypId();
         interval=pref.getInterval();
-        brewStatus = pref.getStaus();
+        brewStatus = pref.getStatus();
+        o_gravity = Double.valueOf(pref.getOG());
 
         // build the url1(last reading) for the api
         url1 = new StringBuffer("http://");
@@ -113,17 +115,40 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // build the url for beer profile description
         urlGetProfle = new StringBuffer("http://");
         urlGetProfle.append(stDypIP);
-        urlGetProfle.append(":"+portNum+"/api/hydrometers/");
-        urlGetProfle.append(stDypId+"/data/last");  //< append the Dyp id
+        urlGetProfle.append(":"+portNum+"/api/profiles/");
 
+        // build the url for beer Battery level request
+        urlBattery = new StringBuffer("http://");
+        urlBattery.append(stDypIP);
+        urlBattery.append(":"+portNum+"/api/hydrometers/");
+        urlBattery.append(stDypId+"/battery");  //< append the Dyp id
 
-//       //< set the spinner on the toolbar
+        // build the url for beer Battery level request
+        urlBattery = new StringBuffer("http://");
+        urlBattery.append(stDypIP);
+        urlBattery.append(":"+portNum+"/api/hydrometers/");
+        urlBattery.append(stDypId+"/battery");  //< append the Dyp id
+
+        // build the url for request interval
+        urlInterval = new StringBuffer("http://");
+        urlInterval.append(stDypIP);
+        urlInterval.append(":"+portNum+"/api/hydrometers/");
+        urlInterval.append(stDypId+"/interval");  //< append the Dyp id
+
+        // build the url for request active
+        urlStart = new StringBuffer("http://");
+        urlStart.append(stDypIP);
+        urlStart.append(":"+portNum+"/api/hydrometers/");
+        urlStart.append(stDypId+"/active");  //< append the Dyp id
+
+        // build the url for request active
+        urlProfile = new StringBuffer("http://");
+        urlProfile.append(stDypIP);
+        urlProfile.append(":"+portNum+"/api/hydrometers/");
+        urlProfile.append(stDypId+"/profile");  //< append the Dyp id
+
+         //< set the spinner on the toolbar
         spinner = findViewById(R.id.spinProfile);
-//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-//                R.array.numbers, android.R.layout.simple_spinner_item);
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); //< pick the type of spinner
-//        spinner.setAdapter(adapter);
-//        spinner.setOnItemSelectedListener(this);
         profileArrayList1 = new ArrayList();
 
         if (savedInstanceState == null) {
@@ -151,10 +176,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         new UnitFragment()).commit();
                 break;
-            case R.id.nav_brew_profile:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new BrewProfileFragment()).commit();
-                break;
+//            case R.id.nav_brew_profile:
+//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+//                        new BrewProfileFragment()).commit();
+//                break;
             case R.id.nav_profile_list:
                // Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show();
                 Intent listBrewIntent = new Intent(MainActivity.this, BrewList.class);
@@ -164,128 +189,60 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         new CalibrateFragment()).commit();
                 break;
-//
-//            case R.id.nav_send:
-//                Toast.makeText(this, "Send", Toast.LENGTH_SHORT).show();
-//                break;
-
         }
 
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
+    /**
+     * Request the list of beer profile from the server(Raspberrypi) via REST IPA call and display in the recycleview in the app
+     */
     public void GetProfileList(){
-        //----------------------------mock API object------------------------
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
-                "https://jsonplaceholder.typicode.com/todos/1", null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject jsonbject) {
-                        try {
-
-
-                            Log.d("PROFILE", "onResponse: " + jsonbject.getInt("id"));
-                            BPid=jsonbject.getInt("id");
-                            BPName=jsonbject.getString("title");
-                            BPGrav=jsonbject.getDouble("id");
-                            BPTemp=jsonbject.getDouble("id");
-                            BPDesc=jsonbject.getString("title");
-//
-//                            //---------------------------- new
-//
-                            Log.d("PROFILE", "onResponse" + BPDesc );
-                            profileArrayList1.add(new profile(1,"Guiness",2,70,"Description"));
-                            profileArrayList1.add(new profile(BPid,BPName,BPGrav,BPTemp,"Description"));
-
-                            GetProfileValue(); //< must have this method to get the data
-
-
-                            //----------------------------------
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+        //---------Get the last data entry of the hydrometer, Specific gravity and temperature
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, urlGetProfle.toString().trim()
+                , null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for(int i=0; i < response.length(); i++){
+                    try {
+                        JSONObject jsonobject=response.getJSONObject(i);
+                        BPid=jsonobject.getInt("id");
+                        BPName=jsonobject.getString("name");
+                        BPGrav=jsonobject.getDouble("req_gravity");
+                        BPTemp=jsonobject.getDouble("req_temp");
+                        BPDesc=jsonobject.getString("description");
+                        Log.d("PROFILE", "onResponse" + BPName );
+                        profileArrayList1.add(new profile(BPid,BPName,BPGrav,BPTemp,"Description"));
+                        GetProfileValue(); //< must have this method to get the data
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-
-                }, new Response.ErrorListener() {
+                }
+            }
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("Error", "onErrorResponse: " + error.getMessage());
+
             }
         });
-
-        queue.add(jsonObjectRequest);
-
-   //<  make a Get list of profile from the  request from the profile (actual call)
-   // use this urlGetProfle use------------------------
-        // Json Array request
-        //---------Get the last data entry of the hydrometer, Specific gravity and temperature
-//        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,
-//                "http://192.168.1.2:5000/api/hydrometers/2/data/last", null, new Response.Listener<JSONArray>() {
-//             //Log.d("JSONARRAY", "onResponse: " );
-//
-//            @Override
-//            public void onResponse(JSONArray response) {
-//
-//                Log.d("JSONARRAY", "onResponse: " + " Test" );
-//                for(int i=0; i < response.length(); i++){
-//                  //  Log.d("JSONARRAY", "onResponse: " + response.length());
-//                    try {
-//                        JSONObject jsonobject=response.getJSONObject(i);
-//                        Log.d("PROFILE", "onResponse: " + jsonbject.getInt("id"));
-//                        BPid=jsonbject.getInt("id");
-//                        BPName=jsonbject.getString("title");
-//                        BPGrav=jsonbject.getDouble("id");
-//                        BPTemp=jsonbject.getDouble("id");
-//                        BPDesc=jsonbject.getString("title");
-//
-//
-//                        Log.d("PROFILE", "onResponse" + BPDesc );
-//                        profileArrayList1.add(new profile(1,"Guiness",2,70,"Description"));
-//                        profileArrayList1.add(new profile(BPid,BPName,BPGrav,BPTemp,"Description"));
-//
-//                        GetProfileValue(); //< must have this method to get the data
-
-//        //----------------------------------
-//
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//                  GetArrayValue(); //< must have this method to get the data
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//
-//            }
-//        });
-//        queue.add(jsonArrayRequest);
-
-
-
-
-
+        queue.add(jsonArrayRequest);
 
     }
-//< The device information will be requested
-    public void GetDypInfo(){
 
+    /**
+     * Request the battery level of the DYP from the PI
+     */
+    public void GetDypInfo(){
         // ----------------------------mock API object------------------------
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
-                "https://jsonplaceholder.typicode.com/todos/1", null,
+                urlBattery.toString().trim(), null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject jsonbject) {
                         try {
-                            // num = random.nextInt(50) + 1;    // generate the random number from
-                            Log.d("JSON", "onResponse: " + jsonbject.getInt("id"));
-                            //---------------------------- new
-                           // batPercent = jsonbject.getInt("id");
-                            batPercent = random.nextInt(50) + 1;
+                            batPercent = jsonbject.getDouble("battery");
                             batt.setText(String.valueOf(batPercent));
-                            //----------------------------------
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -298,49 +255,33 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
         queue.add(jsonObjectRequest);
    //-----------------------------------------------------------------------------------------------
-
-
     }
     public void setToolbarData() {
         GetDypInfo();
-
-        refreshToolBar(10000);
+        refreshToolBar(interval+40);
     }
-    public void refreshToolBar(int milliseconds) {
+
+    public void refreshToolBar(Long milliseconds) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 // do updates
-                //this.run();
                 setToolbarData();
-
             }
-
         };
         refreshBattHandler.postDelayed(runnable, milliseconds);
     }
     public void contents() {
-        //private volatile boolean exit = false;
-
-        //        homeFragment hf = new homeFragment();
-//        FragmentManager manager = getFragmentManager();
-//        manager.beginTransaction()
-//                .replace(R.id.fragment_container,new homeFragment()).commit();
-//        public void run() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                 new homeFragment()).commit();
-        Refresh(20000);
+        Refresh(interval);
     }
 
-//        public void stop() {
-//            exit = true;
-//        }
-
-    // onCreateView().getAutofillId();
-    // public Handler refreshHandler = new Handler();
-
-
-    public void Refresh(int milliseconds) {
+    /**
+     * wait a x amount of time before infating the home screen
+     * @param milliseconds the length between request
+     */
+    public void Refresh(Long milliseconds) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -354,6 +295,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
+//    @Override
+//    public void onPause(){
+//        refreshHandler.removeMessages(0);
+//        super.onPause();
+//    }
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -363,15 +309,58 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
+    /**
+     *  save the selected profile in the drop down menu
+     * @param parent
+     * @param view
+     * @param position position of the item selected
+     * @param l
+     */
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long l) {
-      //  String text = parent.getItemAtPosition(position).toString();
-       // Toast.makeText(parent.getContext(), "It happening", Toast.LENGTH_SHORT).show();
         profile p = (profile) parent.getSelectedItem();
         ProfileId = p.getId();
+        Pid = String.valueOf(ProfileId);
+        brewSetGrav = p.getGravity();
         brewName = p.getName();
-        //Toast.makeText(this, "Selected " + ProfileId, Toast.LENGTH_LONG).show();
         ToastProfileData(p);
+        postProfile();
+    }
+
+    public void postProfile(){
+        requestqueue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlProfile.toString().trim(), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                   JSONObject objres=new JSONObject(response);
+                    Toast.makeText(MainActivity.this,objres.getString("error") ,Toast.LENGTH_LONG).show();
+                } catch (JSONException e) {
+
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Log.d("VOLLEYO", error.getMessage());
+            }
+        }) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public byte[] getBody(){
+                try {
+                    return Pid.getBytes("utf-8");
+                } catch (UnsupportedEncodingException uee) {
+                    //Log.v("Unsupported Encoding while trying to get the bytes", data);
+                    return null;
+                }
+            }
+        };
+        requestqueue.add(stringRequest);
     }
 
     @Override
@@ -379,21 +368,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
+    /**
+     * Connect the Adapter to the brew profile and display it in the spinner
+     */
     private void GetProfileValue(){
-        Log.d("test",profileArrayList1.get(0).getName());
         arrayAdapter1 = new ArrayAdapter<profile>(this,
                 android.R.layout.simple_spinner_item, profileArrayList1);
         arrayAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(arrayAdapter1);
         spinner.setOnItemSelectedListener(this);
-
     }
+
+    /**
+     * Toast more information about the beer profile selected
+     * @param p the beer profile object
+     */
     public void ToastProfileData(profile p){
         String name = p.getName();
         double grav = p.getGravity();
         double temp = p.getTemperature();
         String Desc = p.getDescription();
-
         String ProfileData = "Beer Name: " + name + "\nSpec gravity: " + grav + "\n Temp: "
                 + temp + "\nDesc: ";
         Toast.makeText(this, ProfileData, Toast.LENGTH_LONG).show();

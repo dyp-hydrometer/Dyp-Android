@@ -39,6 +39,14 @@
     <string name="name_beer_here">Name Beer Here</string>
     <string name="specific_gravity">Specific gravity</string>
     <string name="temp">Temperature</string>
+    <string name="channel_description">DYP notification channel </string>>
+    <string name="channel_name">DYPChannel</string>
+    <string name="updated">Updated</string>
+    <string name="refresh">Refresh</string>
+    <string name="start_brewing">Start Brewing</string>
+    <string name="x">x</string>
+    <string name="note_select_beer_in_the_top_right_corner">Select beer before starting the brew ^</string>
+
     <string-array name="numbers">
 
         <item  android:color="#FFFFFF">Select beer</item>
