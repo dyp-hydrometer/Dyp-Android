@@ -24,6 +24,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
+
 import static android.support.v4.content.ContextCompat.getSystemService;
 import static com.test.framer.MainActivity.o_gravity;
 import static com.test.framer.MainActivity.urlStart;
@@ -56,6 +58,7 @@ public class homeFragment extends Fragment {
     private Button refreshBtn;
     private Button startBtn;
     private TextView ABVTxtVal;
+    private static DecimalFormat df2 = new DecimalFormat("#.##");
 
     RequestQueue queue;
     private Prefs preference;
@@ -77,7 +80,7 @@ public class homeFragment extends Fragment {
         unitGrav = v.findViewById(R.id.gravityUnit);
         unitTemp = v.findViewById(R.id.tempUnit);
         txtTimeAgo = v.findViewById(R.id.timelast);
-        ABVTxtVal = v.findViewById(R.id.ABVValue);
+       // ABVTxtVal = v.findViewById(R.id.ABVValue);
 
         preference = new Prefs(getActivity());
         // create the channel id for notifications
@@ -110,12 +113,14 @@ public class homeFragment extends Fragment {
                             lastTemp = jsonbject.getDouble("temp");
                             unitGrav.setText(gravUnit);
                             unitTemp.setText(tempUnit);
-                            ABVTxtVal.setText(String.valueOf(Gravity.ABV(o_gravity,lastGrav)));
+                           // ABVTxtVal.setText(String.valueOf(Gravity.ABV(o_gravity,lastGrav)));
                             grav = Gravity.prefGravUnit(lastGrav, gravUnit);
                             temp = temperature.prefTemprature(lastTemp, tempUnit.trim());
                             Log.d("URL", "Tem  " + temp + " " + tempUnit.trim());
-                            gravTexview.setText(String.format("%.2f", grav));
-                            tempTextView.setText(String.format("%.2f", temp));
+                            //.setText(String.format("%.2f", grav));
+                            gravTexview.setText(df2.format(grav));
+                           // tempTextView.setText(String.format("%.2f", temp));
+                            tempTextView.setText(df2.format(temp));
                             timeAgo = TimeElapsed.getTimeAgo(lastTimeGotData);
                             txtTimeAgo.setText(timeAgo);
 
@@ -139,18 +144,19 @@ public class homeFragment extends Fragment {
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(brewStatus.equals("true")) {
+                  if(brewStatus.equals("true")) {
                     startBtn.setBackgroundColor(getResources().getColor(R.color.colorGreen)); // red color
                     startBtn.setText("START BREWING");
                     brewStatus="false";
 
-                    ABVTxtVal.setText(String.valueOf(Gravity.ABV(o_gravity,lastGrav)));
+                   // ABVTxtVal.setText(String.valueOf(Gravity.ABV(o_gravity,lastGrav)));
                     o_gravity = 0.0;
                     preference.saveOG(String.valueOf(o_gravity));
                     preference.saveStatus(brewStatus);
 
                     Toast.makeText(getContext(), "Ending brew for " + brewName.toUpperCase(), Toast.LENGTH_LONG).show();
-                }else{
+                }
+                else{
                     startBtn.setBackgroundColor(0xFFFF0000);
                     startBtn.setText("END BREWING");
                     brewStatus="true";
@@ -191,7 +197,7 @@ public class homeFragment extends Fragment {
                         }
                     }
                 };
-               requestQ.add(stringRequest);
+                requestQ.add(stringRequest);
             }
         });
 

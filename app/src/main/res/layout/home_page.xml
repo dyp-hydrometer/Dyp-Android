@@ -61,7 +61,7 @@
         android:layout_marginStart="11dp"
         android:text="@string/temperature"
         android:textSize="20sp" />
-
+<!--
     <TextView
         android:id="@+id/ABVLabel"
         android:layout_width="wrap_content"
@@ -89,7 +89,7 @@
         android:layout_marginStart="200dp"
         android:text=""
         android:textSize="20sp" />
-
+-->
     <TextView
         android:id="@+id/tempValue"
         android:layout_width="wrap_content"
